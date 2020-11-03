@@ -9,6 +9,9 @@ import { getAllPostsWithSlug, getPost } from '../../lib/api';
 import styles from '../../styles/Home.module.css';
 import blogStyles from '../../styles/Blog.module.css';
 
+import rawStyles from '!!raw-loader!../../styles/Home.module.css';
+import rawBlogStyles from '!!raw-loader!../../styles/Blog.module.css';
+
 export const config = { amp: 'hybrid' }
 
 export default function Post({ postData }) {
@@ -64,20 +67,38 @@ export default function Post({ postData }) {
   }
 
   return (
-    <div className={styles.container}>
+    <div className="container">
       <Head>
         <title>{postData.title}</title>
         <link rel="icon" ref="icon" href="/favicon.ico" />
+        {isAmp && (
+          <style jsx global>{`
+            ${rawStyles}
+            ${rawBlogStyles}
+            body {
+              background: white;
+            }
+          `}</style>
+        )}
+        {!isAmp && (
+        <style>{`
+          ${rawStyles}
+          ${rawBlogStyles}
+          body {
+            background: white;
+          }
+        `}</style>
+        )}
       </Head>
       <CagThemeProvider>
-        <main className={styles.main}>
+        <main className="main">
           {
             router.isFallback ? (
               <h2>Loading...</h2>
             ) : (
-              <article className={blogStyles.article}>
-                <div className={blogStyles.postmeta}>
-                  <h1 className={styles.title}>{postData.title}</h1>
+              <article className="article">
+                <div className="postmeta">
+                  <h1 className="title">{postData.title}</h1>
                   <p>{formatDate(postData.date)}</p>
                 </div>
                 <div className="post-content content">{renderContent(postData.content)}</div>

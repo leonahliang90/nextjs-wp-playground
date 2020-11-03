@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useAmp } from 'next/amp';
+import styled from 'styled-components'
 
 // data
 import { getAllPosts } from '../../lib/api';
@@ -9,36 +10,60 @@ import { getAllPosts } from '../../lib/api';
 import styles from '../../styles/Home.module.css';
 import blogStyles from '../../styles/Blog.module.css';
 
+import rawStyles from '!!raw-loader!../../styles/Home.module.css';
+import rawBlogStyles from '!!raw-loader!../../styles/Blog.module.css';
+
 export const config = { amp: 'hybrid' };
+
+const Container = styled.div`
+  min-height: 100vh;
+  padding: 0 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const H1Ele = styled.h1`
+  margin: 0;
+  line-height: 1.15;
+  font-size: 4rem;
+  text-align: center;
+`;
 
 const Blog = ({ allPosts: { edges } }) => {
   const isAmp = useAmp();
   return (
-    <div className={styles.container}>
+    <div className="container">
       <Head>
         <title>Blog articles page</title>
         <link rel="icon" href="/favicon.ico" />
-        <style jsx>
-          {`
-            .container {
-              min-height: 100vh;
-              padding: 0 0.5rem;
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              align-items: center;
+        {isAmp && (
+          <style jsx global>{`
+            ${rawStyles}
+            ${rawBlogStyles}
+            body {
+              background: white;
             }
-          `}
-        </style>
+          `}</style>
+        )}
+        {!isAmp && (
+        <style>{`
+          ${rawStyles}
+          ${rawBlogStyles}
+          body {
+            background: white;
+          }
+        `}</style>
+        )}
       </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>Latest blog articles</h1>
+      <main className="main">
+        <h1 className="title">Latest blog articles</h1>
         <hr />
         <section>
           {edges.map(({ node }) => (
-            <div className={blogStyles.listitem} key={node.id}>
-              <div className={blogStyles.listitem__thumbnail}>
+            <div className="listitem" key={node.id}>
+              <div className="listitem__thumbnail">
                 <figure>
                   {isAmp ? (
                     <amp-img
@@ -56,7 +81,7 @@ const Blog = ({ allPosts: { edges } }) => {
                   )}
                 </figure>
               </div>
-              <div className={blogStyles.listitem__content}>
+              <div className="listitem__content">
                 <h2>{node.title}</h2>
                 {/* <p>{node.extraPostInfo.authorExcerpt}</p> */}
                 <Link href={`/blog/${node.slug}`}>
